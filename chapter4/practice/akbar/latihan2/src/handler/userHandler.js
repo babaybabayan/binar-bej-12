@@ -5,6 +5,8 @@ class UserHandler {
     // Binding
     this.getAll = this.getAll.bind(this);
     this.getByEmail = this.getByEmail.bind(this);
+    this.login = this.login.bind(this);
+    this.register = this.register.bind(this);
   }
 
   getAll(req, res) {
@@ -16,7 +18,7 @@ class UserHandler {
   }
 
   getByEmail(req, res) {
-    const email = req.params.email;
+    const email = req.body.email;
     const user = this.userService.getByEmail(email);
 
     let statusCode = 200;
@@ -34,28 +36,31 @@ class UserHandler {
     // TODO:
     // return 201 (created) ketika berhasil
     // gagal return 400
-    const { email, password } = req.body;
+    const { name, email, password } = req.body;
+    const user = this.userService.getByEmail(email);
 
     let statusCode = 200;
-    let message = "OK";
+    let message = 'OK';
 
     if (!email || !password) {
       statusCode = 400;
-      message = "username or password is empty";
+      message = 'username or password is empty';
     }
 
-    // Find user
-    const isUserExist = user.find((user) => user.email === email);
-
-    if (isUserExist) {
+    if (user) {
       statusCode = 400;
-      message = "user already registered";
+      message = 'user already registered';
+    } else {
+      // create user
+      const newUser = { name, email, password };
+      this.userService.add(newUser);
+      message = 'Success Added';
     }
 
-    // create user
-    const newUser = { email, password };
-    this.userService.add(newUser);
-    return res.status(statusCode).send("OK");
+    return res.status(statusCode).json({
+      statusCode: statusCode,
+      message: message,
+    });
   }
 
   login(req, res) {
@@ -64,21 +69,28 @@ class UserHandler {
     // gagal return 400
     const { email, password } = req.body;
 
+    const user = this.userService.getByEmail(email);
+
     let statusCode = 201;
-    let message = "OK";
+    let message = 'OK';
 
     if (!email || !password) {
       statusCode = 400;
-      message = "incorrect username or password";
-    }
-    // Find user
-    const isUserExist = this.userService.getByEmail(email);
-    if (!isUserExist) {
-      statusCode = 400;
-      message = "User not found";
+      message = 'incorrect username or password';
     }
 
-    return res.status(statusCode).send(message);
+    if (user) {
+      message = user.password == password ? `Login Success` : 'Incorrect Password';
+      statusCode = user.password == password ? 200 : 400;
+    } else {
+      statusCode = 400;
+      message = 'user not found';
+    }
+
+    return res.status(statusCode).json({
+      statusCode: statusCode,
+      message: message,
+    });
   }
 }
 
