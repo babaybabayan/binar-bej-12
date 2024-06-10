@@ -1,0 +1,14 @@
+{
+  "name": "akbar",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "author": "akbar",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
