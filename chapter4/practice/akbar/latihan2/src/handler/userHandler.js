@@ -24,7 +24,7 @@ class UserHandler {
     let statusCode = 200;
 
     if (user === null) {
-      statusCode = 404;
+      statusCode = 400;
     }
 
     res.status(statusCode).send({
@@ -40,21 +40,21 @@ class UserHandler {
     const user = this.userService.getByEmail(email);
 
     let statusCode = 200;
-    let message = 'OK';
+    let message = "OK";
 
     if (!email || !password) {
       statusCode = 400;
-      message = 'username or password is empty';
+      message = "username or password is empty";
     }
 
     if (user) {
       statusCode = 400;
-      message = 'user already registered';
+      message = "user already registered";
     } else {
       // create user
       const newUser = { name, email, password };
       this.userService.add(newUser);
-      message = 'Success Added';
+      message = "Success Added";
     }
 
     return res.status(statusCode).json({
@@ -72,19 +72,20 @@ class UserHandler {
     const user = this.userService.getByEmail(email);
 
     let statusCode = 201;
-    let message = 'OK';
+    let message = "OK";
 
     if (!email || !password) {
       statusCode = 400;
-      message = 'incorrect username or password';
+      message = "incorrect username or password";
     }
 
     if (user) {
-      message = user.password == password ? `Login Success` : 'Incorrect Password';
-      statusCode = user.password == password ? 200 : 400;
+      message =
+        user.password === password ? "Login Success" : "Incorrect Password";
+      statusCode = user.password === password ? 200 : 400;
     } else {
       statusCode = 400;
-      message = 'user not found';
+      message = "user not found";
     }
 
     return res.status(statusCode).json({
