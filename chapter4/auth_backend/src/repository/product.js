@@ -1,42 +1,19 @@
-const products = [
-  {
-    id: 1,
-    name: "laptop macbook",
-    price: 1234124,
-    user_email: "adit@gmail.com",
-    category_code: "lp",
-    image: "binar.png"
-  },
-  {
-    id: 2,
-    name: "laptop windows",
-    price: 1234124,
-    user_email: "hanvir@gmail.com",
-    category_code: "lp",
-    image: "windows.png" // frontend: http://localhost:8000/windows.png
-  },
-  {
-    id: 3,
-    name: "hp samsung",
-    price: 1234124,
-    user_email: "hanvir@gmail.com",
-    category_code: "hp"
-  }
-];
+const pgConn = require('../config/postgres')
 
 class ProductRepository {
-  constructor() {
-    this.products = products;
+  constructor() { }
+
+  async getAll() {
+    const getProducts = await pgConn`select id, name, price from products`;
+
+    return getProducts;
   }
 
-  getAll() {
-    return this.products;
-  }
+  async insert(product) {
+    const createdProduct = await pgConn`
+      insert into products (name, price) values (${product.name}, ${product.price})`;
 
-  insert(product) {
-    this.products.push(product);
-
-    return product;
+    return createdProduct;
   }
 }
 
